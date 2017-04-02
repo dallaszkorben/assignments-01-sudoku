@@ -14,16 +14,27 @@ public class Sudo {
 
 		Sudo sudo = new Sudo();
 
-		sudo.fillUp();
-		
-		sudo.solveIt();
-		
-		sudo.printout();
 
 	}
 
 	public Sudo() {
 		initialization();
+		
+		fillUp();
+		
+		solveIt();
+		printout();			
+		
+		initialization();
+		
+		fillUp();
+		
+		//Get the first cell
+		Cell actualCell = blocks[0][0].getCell(0, 0);
+		solveIt(actualCell);
+		
+		printout();			
+		
 	}
 
 	private void initialization() {
@@ -73,6 +84,43 @@ public class Sudo {
 		blocks[2][2].getCell(0, 0).setFixValue(7);
 		blocks[2][2].getCell(1, 1).setFixValue(8);
 		blocks[2][2].getCell(2, 2).setFixValue(9);
+	}
+	
+	private boolean solveIt(Cell actualCell ){
+
+		boolean isDone = false;
+
+		if( null == actualCell ){
+			return true;
+		}
+		
+		//If the actual cell is NOT fix
+		if( !actualCell.isFix() ){
+
+			//Clear the possibilities
+			actualCell.resetPossibilities();
+				
+			//Search possibilities for the cell
+			for( int i = 1; i < 10; i++ ){
+				if( isValid( actualCell, i) ){
+					actualCell.addPossibility( i );
+				}
+			}
+				
+			while( !isDone && actualCell.hasPossibility() ){
+				
+				//Then selects the next one
+				actualCell.setValue( actualCell.getNextPossibility() );
+				
+				isDone = solveIt( actualCell.getNext());
+			}
+			return isDone;
+		
+		}else{
+			isDone = solveIt( actualCell.getNext());
+		}
+		
+		return isDone;
 	}
 	
 	private void solveIt(){
@@ -131,8 +179,8 @@ public class Sudo {
 			if( goForward ){
 				actualCell = actualCell.getNext();
 				
-				System.out.println(count++);
-				printout();
+//				System.out.println(count++);
+//				printout();
 
 			}else{
 				actualCell = actualCell.getPrevious();
